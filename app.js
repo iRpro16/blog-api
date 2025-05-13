@@ -1,4 +1,5 @@
 const express = require("express");
+const cors = require("cors");
 const app = express();
 const path = require("node:path");
 const assetsPath = path.join(__dirname, "/public");
@@ -7,10 +8,13 @@ const passport = require("passport");
 const { PrismaSessionStore } = require("@quixo3/prisma-session-store");
 const { PrismaClient } = require("@prisma/client");
 
+// Routers
+const authRouter = require("./routes/authRoute");
+
 // Setup
 app.use(express.static(assetsPath));
 
-// session
+// Session
 app.use(session({
     cookie: {
         maxAge: 7 * 24 * 60 * 60 * 1000 //ms
@@ -28,9 +32,14 @@ app.use(session({
     ) 
 }));
 app.use(passport.session());
+app.use(cors());
 app.use(express.urlencoded({ extended: false }));
+app.use(express.json());
 
-// port
+// Routes
+app.use(authRouter);
+
+// Port
 const PORT = 3000;
 app.listen(PORT, () => {
     console.log(`Listening to on PORT: ${PORT}`);
