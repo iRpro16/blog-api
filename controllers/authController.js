@@ -51,7 +51,6 @@ async function postUserLogin(req, res) {
         console.error(err);
         res.status(401).json({ message: "User unauthorized" });
     }
-
 }
 
 module.exports = {

@@ -10,6 +10,7 @@ const { PrismaClient } = require("@prisma/client");
 
 // Routers
 const authRouter = require("./routes/authRoute");
+const postsRouter = require("./routes/postsRoute");
 
 // Setup
 app.use(express.static(assetsPath));
@@ -38,6 +39,7 @@ app.use(express.json());
 
 // Routes
 app.use(authRouter);
+app.use(postsRouter);
 
 // Port
 const PORT = 3000;

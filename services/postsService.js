@@ -30,11 +30,12 @@ async function showAllPosts() {
 }
 
 async function deletePost(postId) {
-    await prisma.post.delete({
+    const deletedPost = await prisma.post.delete({
         where: {
             id: postId,
         }
-    })
+    });
+    return deletedPost;
 }
 
 module.exports = {
