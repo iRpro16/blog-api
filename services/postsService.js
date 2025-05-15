@@ -3,11 +3,11 @@ const prisma = require("../prisma/client");
 async function createPost(heading, subheading, content, userId, published) {
     await prisma.post.create({
         data: {
-            heading: heading,
-            subheading: subheading,
-            content: content,
-            userId: userId,
-            published: published
+            heading,
+            subheading,
+            content,
+            userId,
+            published
         }  
     })
 }
@@ -38,9 +38,26 @@ async function deletePost(postId) {
     return deletedPost;
 }
 
+async function updatePost(postId, heading, subheading, content, published) {
+    const updatedPost = await prisma.post.update({
+        where: {
+            id: postId
+        },
+        data: {
+            heading,
+            subheading,
+            content,
+            published,
+            updatedAt: new Date(),
+        }
+    })
+    return updatedPost;
+}
+
 module.exports = {
     createPost,
     showPost,
     showAllPosts,
-    deletePost
+    deletePost,
+    updatePost
 }

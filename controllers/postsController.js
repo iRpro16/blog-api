@@ -1,12 +1,9 @@
 const postsService = require("../services/postsService");
-const jwt = require("jsonwebtoken");
 
 async function postCreatePost(req, res) {
     try {
         const { heading, subheading, content, published } = req.body;
-
-        const decoded = jwt.verify(req.token, 'secretkey'); // verify token passed from middleware
-        const userId = decoded.user.id;
+        const userId = req.user.id; // from previous middleware
 
         // handle if user is undefined
         if (!userId) {
@@ -49,6 +46,10 @@ async function deleteBlogPost(req, res) {
         const { id } = req.params;
         const deleted = await postsService.deletePost(id);
 
+        if (!req.user) {
+            return res.status(401).json({ message: "Unauthorized" });
+        }
+
         if (!deleted) {
             return res.status(404).json({ message: "Post not found or already deleted" });
         }
@@ -75,9 +76,37 @@ async function getAllBlogPosts(req, res) {
     }
 }
 
+async function putBlogPost(req, res) {
+    try {
+        const { id } = req.params;
+        const { heading, subheading, content, published } = req.body;
+
+        if (!req.user) {
+            return res.status(401).json({ message: "Unauthorized" });
+        }
+
+        // handle empty heading
+        if (!heading || heading.trim() === "") {
+            return res.status(400).json({ message: "Heading is required" });
+        }
+
+        const updated = await postsService.updatePost(id, heading, subheading, content, published);
+
+        if (!updated) {
+            return res.status(404).json({ message: "Post not found" });
+        }
+
+        res.status(200).json({ post: updated });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: "Server error while editing post" });
+    }
+}
+
 module.exports = {
     postCreatePost,
     getBlogPost,
     deleteBlogPost,
-    getAllBlogPosts
+    getAllBlogPosts,
+    putBlogPost
 }

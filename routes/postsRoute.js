@@ -1,17 +1,21 @@
 const { Router } = require("express");
-const postsRotuer =  Router();
+const postsRouter =  Router();
 const postsController = require("../controllers/postsController");
 const verifyToken = require("../middleware/verifyToken");
 
 // GET method to fetch all posts
-postsRotuer.get("/api/posts", postsController.getAllBlogPosts);
+postsRouter.get("/api/posts", postsController.getAllBlogPosts);
+
 // POST method to create post
-postsRotuer.post("/api/posts", verifyToken, postsController.postCreatePost);
+postsRouter.post("/api/posts", verifyToken, postsController.postCreatePost);
 
 // GET method to load post
-postsRotuer.get("/api/posts/:id", postsController.getBlogPost);
+postsRouter.get("/api/posts/:id", postsController.getBlogPost);
 
 // DELETE method to delete post
-postsRotuer.delete("/api/posts/:id", postsController.deleteBlogPost);
+postsRouter.delete("/api/posts/:id", verifyToken, postsController.deleteBlogPost);
 
-module.exports = postsRotuer;
+// PUT method to update post
+postsRouter.put("/api/posts/:id", verifyToken, postsController.putBlogPost);
+
+module.exports = postsRouter;

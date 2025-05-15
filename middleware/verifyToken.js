@@ -1,19 +1,23 @@
+const jwt = require("jsonwebtoken");
+
 function verifyToken(req, res, next) {
-    // Get auth header value
     const bearerHeader = req.headers['authorization'];
-    // Check if bearer is undefined
+
     if (typeof bearerHeader !== 'undefined') {
-        // Split the space
         const bearer = bearerHeader.split(' ');
-        // Get token from array
-        const bearerToken = bearer[1];
-        // Set the token
-        req.token = bearerToken;
-        // Next middleware
-        next()
+        const token = bearer[1];
+
+        jwt.verify(token, 'secretkey', (err, decoded) => {
+            if (err) {
+                return res.status(403).json({ message: 'Invalid or expired token' });
+            }
+
+            req.user = decoded.user; // attach decoded user info
+            next();
+        });
     } else {
         // Forbidden
-        res.status(403).json({ message: "Error 403: Access denied" });
+        res.status(403).json({ message: "No token provided" });
     }
 }
 
